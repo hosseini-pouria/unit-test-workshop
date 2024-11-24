@@ -6,6 +6,8 @@ class Product
 {
     public const INVALID_PRICE_MESSAGE = 'قیمت محصول نمی تواند کمتر از صفر باشد';
     public const INVALID_QUANTITY_MESSAGE = 'موجودی محصول نمی تواند کمتر از صفر باشد';
+    public const INVALID_TITLE_MESSAGE = 'عنوان محصول نمی تواند خالی بلشد';
+    public const INVALID_TITLE_LENGTH_MESSAGE = 'عنوان محصول نمی تواند کوچکتر از 50 کاراکتر باشد';
 
     public function __construct(
         public string $title,
@@ -53,4 +55,22 @@ class Product
     {
         $this->changeQuantity($this->quantity++);
     }
+
+    public function changeTitle(string $newTitle): void
+    {
+        if (empty($newTitle)) {
+            throw new \InvalidArgumentException(self::INVALID_TITLE_MESSAGE);
+        }
+        if (mb_strlen($newTitle) < 50) {
+            throw new \InvalidArgumentException(self::INVALID_TITLE_LENGTH_MESSAGE);
+        }
+
+        $this->title = $newTitle;
+    }
+
+    public function soldOut(): void
+    {
+        $this->changeQuantity(0);
+    }
+
 }

@@ -150,6 +150,59 @@ class ProductTest extends TestCase
         $sut->changeQuantity($newQuantity);
     }
 
+    public function test_changing_title()
+    {
+        // arrange
+        $title = $this->faker->word();
+        $price = $this->faker->numberBetween(100_000,500_000);
+        $quantity = $this->faker->numberBetween(10,100);;
+        $category = $this->faker->word();
+        $sut = new Product($title,$price,$quantity,$category);
+        $newTitle = $this->faker->sentence(50);
+
+        // act
+        $sut->changeTitle($newTitle);
+
+        // assert
+        $this->assertEquals($newTitle, $sut->title);
+    }
+
+    public function test_empty_title_is_not_allowed(): void
+    {
+        // arrange
+        $title = $this->faker->word();
+        $price = $this->faker->numberBetween(100_000,500_000);
+        $quantity = $this->faker->numberBetween(10,100);;
+        $category = $this->faker->word();
+        $sut = new Product($title,$price,$quantity,$category);
+        $newTitle = '';
+
+        // assert
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(Product::INVALID_TITLE_MESSAGE);
+
+        // act
+        $sut->changeTitle($newTitle);
+    }
+
+    public function test_title_with_length_lower_than_50_chars_is_not_allowed(): void
+    {
+        // arrange
+        $title = $this->faker->word();
+        $price = $this->faker->numberBetween(100_000,500_000);
+        $quantity = $this->faker->numberBetween(10,100);;
+        $category = $this->faker->word();
+        $sut = new Product($title,$price,$quantity,$category);
+        $newTitle = $this->faker->word();
+
+        // assert
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(Product::INVALID_TITLE_LENGTH_MESSAGE);
+
+        // act
+        $sut->changeTitle($newTitle);
+    }
+
     public static function priceList(): array
     {
         return[

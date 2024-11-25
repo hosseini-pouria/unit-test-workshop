@@ -35,14 +35,11 @@ class ProductTest extends TestCase
     public function test_not_possible_to_define_a_product_with_negative_price(): void
     {
         // arrange
-        $title = $this->faker->word();
-        $price = -1000000;
-        $quantity = $this->faker->numberBetween(10,100);
-        $category = $this->faker->word();
+        $price = -1_000_000;
 
         try {
             // act
-            $sut = new Product(ProductId::newId(), $title, $price, $quantity, $category);
+            $sut = $this->createProduct($price);
         } catch (\Exception $exception) {
             // assert
             $this->assertInstanceOf(\InvalidArgumentException::class, $exception);
@@ -219,5 +216,14 @@ class ProductTest extends TestCase
             'تعداد 60' => [60],
             'تعداد صفر' => [0]
         ];
+    }
+
+    public function createProduct(int $price): Product
+    {
+        $title = $this->faker->word();
+        $quantity = $this->faker->numberBetween(10, 100);
+        $category = $this->faker->word();
+
+        return new Product(ProductId::newId(), $title, $price, $quantity, $category);
     }
 }

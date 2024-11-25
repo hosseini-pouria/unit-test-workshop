@@ -4,6 +4,7 @@ namespace Tests\Product;
 
 use App\Models\User;
 use App\Product\Product;
+use App\Product\ProductId;
 use Illuminate\Foundation\Testing\WithFaker;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
@@ -15,13 +16,14 @@ class ProductTest extends TestCase
     public function test_define_a_product(): void
     {
         // arrange
+        $productId = ProductId::newId();
         $title = $this->faker->word();
         $price = $this->faker->numberBetween(100000,20000000);
         $quantity = $this->faker->numberBetween(10,100);;
         $category = $this->faker->word();
 
         // act
-        $sut = new Product($title,$price,$quantity,$category);
+        $sut = new Product($productId, $title, $price, $quantity, $category);
 
         // assert
         $this->assertEquals($title, $sut->title);
@@ -40,7 +42,7 @@ class ProductTest extends TestCase
 
         try {
             // act
-            $sut = new Product($title,$price,$quantity,$category);
+            $sut = new Product(ProductId::newId(), $title, $price, $quantity, $category);
         } catch (\Exception $exception) {
             // assert
             $this->assertInstanceOf(\InvalidArgumentException::class, $exception);
@@ -55,7 +57,7 @@ class ProductTest extends TestCase
         $this->expectExceptionMessage(Product::INVALID_PRICE_MESSAGE);
 
         // act
-        $sut = new Product($title,$price,$quantity,$category);
+        $sut = new Product(ProductId::newId(), $title, $price, $quantity, $category);
         */
     }
 
@@ -69,7 +71,7 @@ class ProductTest extends TestCase
 
         try {
             // act
-            $sut = new Product($title,$price,$quantity,$category);
+            $sut = new Product(ProductId::newId(), $title, $price, $quantity, $category);
         } catch (\Exception $exception) {
             // assert
             $this->assertInstanceOf(\InvalidArgumentException::class, $exception);
@@ -85,7 +87,7 @@ class ProductTest extends TestCase
         $price = $this->faker->numberBetween(100_000,500_000);
         $quantity = $this->faker->numberBetween(10,100);;
         $category = $this->faker->word();
-        $sut = new Product($title,$price,$quantity,$category);
+        $sut = new Product(ProductId::newId(), $title, $price, $quantity, $category);
         // $user = User::factory()->make(); // Laravel example
 
         // act
@@ -102,7 +104,7 @@ class ProductTest extends TestCase
         $price = $this->faker->numberBetween(100_000,500_000);
         $quantity = $this->faker->numberBetween(10,100);;
         $category = $this->faker->word();
-        $sut = new Product($title,$price,$quantity,$category);
+        $sut = new Product(ProductId::newId(), $title, $price, $quantity, $category);
         $newPrice = -2_000_000;
 
         try {
@@ -123,7 +125,7 @@ class ProductTest extends TestCase
         $price = $this->faker->numberBetween(100_000,500_000);
         $quantity = $this->faker->numberBetween(10,100);;
         $category = $this->faker->word();
-        $sut = new Product($title,$price,$quantity,$category);
+        $sut = new Product(ProductId::newId(), $title, $price, $quantity, $category);
 
         // act
         $sut->changeQuantity($newQuantity);
@@ -139,7 +141,7 @@ class ProductTest extends TestCase
         $price = $this->faker->numberBetween(100_000,500_000);
         $quantity = $this->faker->numberBetween(10,100);;
         $category = $this->faker->word();
-        $sut = new Product($title,$price,$quantity,$category);
+        $sut = new Product(ProductId::newId(), $title, $price, $quantity, $category);
         $newQuantity = -10;
 
         // assert
@@ -157,7 +159,7 @@ class ProductTest extends TestCase
         $price = $this->faker->numberBetween(100_000,500_000);
         $quantity = $this->faker->numberBetween(10,100);;
         $category = $this->faker->word();
-        $sut = new Product($title,$price,$quantity,$category);
+        $sut = new Product(ProductId::newId(), $title, $price, $quantity, $category);
         $newTitle = $this->faker->sentence(50);
 
         // act
@@ -174,7 +176,7 @@ class ProductTest extends TestCase
         $price = $this->faker->numberBetween(100_000,500_000);
         $quantity = $this->faker->numberBetween(10,100);;
         $category = $this->faker->word();
-        $sut = new Product($title,$price,$quantity,$category);
+        $sut = new Product(ProductId::newId(), $title, $price, $quantity, $category);
         $newTitle = '';
 
         // assert
@@ -192,7 +194,7 @@ class ProductTest extends TestCase
         $price = $this->faker->numberBetween(100_000,500_000);
         $quantity = $this->faker->numberBetween(10,100);;
         $category = $this->faker->word();
-        $sut = new Product($title,$price,$quantity,$category);
+        $sut = new Product(ProductId::newId(), $title, $price, $quantity, $category);
         $newTitle = $this->faker->word();
 
         // assert

@@ -10,6 +10,7 @@ class Product
     public const INVALID_TITLE_LENGTH_MESSAGE = 'عنوان محصول نمی تواند کوچکتر از 50 کاراکتر باشد';
 
     public function __construct(
+        public ProductId $productId,
         public string $title,
         public int $price,
         public int $quantity,

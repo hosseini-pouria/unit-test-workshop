@@ -7,6 +7,7 @@ use App\Product\Product;
 use App\Product\ProductId;
 use Illuminate\Foundation\Testing\WithFaker;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Tests\Builder\ProductBuilder;
 use Tests\TestCase;
 
 class ProductTest extends TestCase
@@ -15,11 +16,22 @@ class ProductTest extends TestCase
 
     public function test_define_a_product(): void
     {
-        // arrange
+        // act
+        $sut = ProductBuilder::aProduct()->build();
+
+        // assert
+        $this->assertInstanceOf(Product::class,$sut);
+        $this->assertNotNull(Product::class, $sut->title);
+
+
+        /*
+         *** Inline Fixture setup ***
+         */
+        /*// arrange
         $productId = ProductId::newId();
         $title = $this->faker->word();
         $price = $this->faker->numberBetween(100000,20000000);
-        $quantity = $this->faker->numberBetween(10,100);;
+        $quantity = $this->faker->numberBetween(10,100);
         $category = $this->faker->word();
 
         // act
@@ -29,12 +41,26 @@ class ProductTest extends TestCase
         $this->assertEquals($title, $sut->title);
         $this->assertEquals($price, $sut->price);
         $this->assertEquals($quantity, $sut->quantity);
-        $this->assertEquals($category, $sut->category);
+        $this->assertEquals($category, $sut->category);*/
     }
 
     public function test_not_possible_to_define_a_product_with_negative_price(): void
     {
-        // arrange
+        try {
+            // act
+            $sut = ProductBuilder::aProduct()
+                ->withPrice(-1_000_000)
+                ->build();
+        } catch (\Exception $exception) {
+            // assert
+            $this->assertInstanceOf(\InvalidArgumentException::class, $exception);
+            $this->assertEquals(Product::INVALID_PRICE_MESSAGE, $exception->getMessage());
+        }
+
+        /*
+         *** Inline Fixture setup ***
+         */
+        /*// arrange
         $price = -1_000_000;
 
         try {
@@ -44,7 +70,7 @@ class ProductTest extends TestCase
             // assert
             $this->assertInstanceOf(\InvalidArgumentException::class, $exception);
             $this->assertEquals(Product::INVALID_PRICE_MESSAGE, $exception->getMessage());
-        }
+        }*/
 
         /*
          *** OR ***
@@ -60,15 +86,11 @@ class ProductTest extends TestCase
 
     public function test_not_possible_to_define_a_product_with_negative_quantity(): void
     {
-        // arrange
-        $title = $this->faker->word();
-        $price = $this->faker->numberBetween(100000,20000000);
-        $quantity = -10;
-        $category = $this->faker->word();
-
         try {
             // act
-            $sut = new Product(ProductId::newId(), $title, $price, $quantity, $category);
+            $sut = ProductBuilder::aProduct()
+                ->withQuantity(-10)
+                ->build();
         } catch (\Exception $exception) {
             // assert
             $this->assertInstanceOf(\InvalidArgumentException::class, $exception);
@@ -80,12 +102,12 @@ class ProductTest extends TestCase
     public function test_changing_price(int $newPrice): void
     {
         // arrange
-        $title = $this->faker->word();
-        $price = $this->faker->numberBetween(100_000,500_000);
-        $quantity = $this->faker->numberBetween(10,100);;
-        $category = $this->faker->word();
-        $sut = new Product(ProductId::newId(), $title, $price, $quantity, $category);
-        // $user = User::factory()->make(); // Laravel example
+        $sut = ProductBuilder::aProduct()->build();
+
+        /*
+         ***  use Laravel example ***
+         */
+        // $user = User::factory()->make();
 
         // act
         $sut->changePrice($newPrice);
@@ -97,11 +119,7 @@ class ProductTest extends TestCase
     public function test_it_not_possible_to_change_price_with_negative_price(): void
     {
         // arrange
-        $title = $this->faker->word();
-        $price = $this->faker->numberBetween(100_000,500_000);
-        $quantity = $this->faker->numberBetween(10,100);;
-        $category = $this->faker->word();
-        $sut = new Product(ProductId::newId(), $title, $price, $quantity, $category);
+        $sut = ProductBuilder::aProduct()->build();
         $newPrice = -2_000_000;
 
         try {
@@ -118,11 +136,7 @@ class ProductTest extends TestCase
     public function test_changing_quantity(int $newQuantity)
     {
         // arrange
-        $title = $this->faker->word();
-        $price = $this->faker->numberBetween(100_000,500_000);
-        $quantity = $this->faker->numberBetween(10,100);;
-        $category = $this->faker->word();
-        $sut = new Product(ProductId::newId(), $title, $price, $quantity, $category);
+        $sut = ProductBuilder::aProduct()->build();
 
         // act
         $sut->changeQuantity($newQuantity);
@@ -134,11 +148,7 @@ class ProductTest extends TestCase
     public function test_its_not_possible_to_change_quantity_with_negative_value(): void
     {
         // arrange
-        $title = $this->faker->word();
-        $price = $this->faker->numberBetween(100_000,500_000);
-        $quantity = $this->faker->numberBetween(10,100);;
-        $category = $this->faker->word();
-        $sut = new Product(ProductId::newId(), $title, $price, $quantity, $category);
+        $sut = ProductBuilder::aProduct()->build();
         $newQuantity = -10;
 
         // assert
@@ -152,11 +162,7 @@ class ProductTest extends TestCase
     public function test_changing_title()
     {
         // arrange
-        $title = $this->faker->word();
-        $price = $this->faker->numberBetween(100_000,500_000);
-        $quantity = $this->faker->numberBetween(10,100);;
-        $category = $this->faker->word();
-        $sut = new Product(ProductId::newId(), $title, $price, $quantity, $category);
+        $sut = ProductBuilder::aProduct()->build();
         $newTitle = $this->faker->sentence(50);
 
         // act
@@ -169,11 +175,7 @@ class ProductTest extends TestCase
     public function test_empty_title_is_not_allowed(): void
     {
         // arrange
-        $title = $this->faker->word();
-        $price = $this->faker->numberBetween(100_000,500_000);
-        $quantity = $this->faker->numberBetween(10,100);;
-        $category = $this->faker->word();
-        $sut = new Product(ProductId::newId(), $title, $price, $quantity, $category);
+        $sut = ProductBuilder::aProduct()->build();
         $newTitle = '';
 
         // assert
@@ -187,11 +189,7 @@ class ProductTest extends TestCase
     public function test_title_with_length_lower_than_50_chars_is_not_allowed(): void
     {
         // arrange
-        $title = $this->faker->word();
-        $price = $this->faker->numberBetween(100_000,500_000);
-        $quantity = $this->faker->numberBetween(10,100);;
-        $category = $this->faker->word();
-        $sut = new Product(ProductId::newId(), $title, $price, $quantity, $category);
+        $sut = ProductBuilder::aProduct()->build();
         $newTitle = $this->faker->word();
 
         // assert

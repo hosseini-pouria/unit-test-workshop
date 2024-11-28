@@ -74,4 +74,9 @@ class Product
         $this->changeQuantity(0);
     }
 
+    public function price(): int
+    {
+        return $this->price;
+    }
+
 }

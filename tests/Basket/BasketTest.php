@@ -3,11 +3,15 @@
 namespace Tests\Basket;
 
 use App\Basket\Basket;
+use App\Coupon\Coupon;
+use Illuminate\Foundation\Testing\WithFaker;
 use Tests\Builder\ProductBuilder;
 use Tests\TestCase;
 
 class BasketTest extends TestCase
 {
+    use WithFaker;
+
     public function test_adding_product(): void
     {
         // arrange
@@ -105,5 +109,25 @@ class BasketTest extends TestCase
 
         // arrange
         $this->assertEquals(0, $sut->itemsCount());
+    }
+
+    public function test_apply_coupon(): void
+    {
+        // arrange
+        $productPrice = 2_000_000;
+        $product = ProductBuilder::aProduct()
+            ->withPrice($productPrice)
+            ->build();
+        $sut = new Basket();
+        $sut->addProduct($product);
+        $couponPercent = 30;
+        $coupon = new Coupon($this->faker->word(), $couponPercent);
+        $expectedTotalPrice = 1_400_000;
+
+        // act
+        $sut->applyCoupon($coupon);
+
+        // assert
+        $this->assertEquals($expectedTotalPrice, $sut->totalPrice());
     }
 }

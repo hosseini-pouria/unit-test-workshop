@@ -2,6 +2,7 @@
 
 namespace App\Basket;
 
+use App\Coupon\Coupon;
 use App\Product\Product;
 use Illuminate\Support\Collection;
 
@@ -9,6 +10,7 @@ class Basket
 {
     public const PRODUCT_NOT_FOUND_ERR_MESSAGE = 'محصول مورد نظر یافت نشد';
     private Collection $items;
+    private Coupon $appliedCoupon;
 
     public function __construct()
     {
@@ -34,9 +36,15 @@ class Basket
 
     public function totalPrice(): int
     {
-        return $this->items->reduce(fn(int $total, array $basketItem) =>
+        $totalPrice = $this->items->reduce(fn(int $total, array $basketItem) =>
                 $total += $basketItem['product']->price() * $basketItem['quantity'], 0
             );
+
+        if (empty($this->appliedCoupon)) {
+            return $totalPrice;
+        }
+
+        return $totalPrice * (1 - ($this->appliedCoupon->couponPercent() / 100));
     }
 
     public function removeProduct(Product $product): void
@@ -63,6 +71,11 @@ class Basket
     public function deleted(): void
     {
         $this->items = collect([]);
+    }
+
+    public function applyCoupon(Coupon $coupon): void
+    {
+        $this->appliedCoupon = $coupon;
     }
 
 }
